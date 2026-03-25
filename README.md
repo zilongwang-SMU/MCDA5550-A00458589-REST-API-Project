@@ -149,5 +149,3 @@ http://127.0.0.1:8000/api/hotels/?checkin=2026-03-28&checkout=2026-03-30
   }
 ]
 ```
-
-![alt text](image.png)
