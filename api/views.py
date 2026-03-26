@@ -1,12 +1,27 @@
-from django.shortcuts import render
+from datetime import datetime
 
-# Create your views here.
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Hotel, Reservation
 from .serializers import HotelSerializer, ReservationSerializer
+
+
+@api_view(['GET'])
+def home(request):
+    return Response(
+        {
+            'message': 'Hotel Reservation API is running.',
+            'endpoints': {
+                'home': '/',
+                'admin': '/admin/',
+                'get_hotels': '/api/hotels/?checkin=YYYY-MM-DD&checkout=YYYY-MM-DD',
+                'reservation_confirmation': '/api/reservations/confirm/',
+            }
+        },
+        status=status.HTTP_200_OK
+    )
 
 
 @api_view(['GET'])
@@ -20,13 +35,26 @@ def getListOfHotels(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # find hotels that already have overlapping reservations
+    try:
+        checkin_date = datetime.strptime(checkin, '%Y-%m-%d').date()
+        checkout_date = datetime.strptime(checkout, '%Y-%m-%d').date()
+    except ValueError:
+        return Response(
+            {'error': 'Date format must be YYYY-MM-DD.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if checkin_date >= checkout_date:
+        return Response(
+            {'error': 'Checkout date must be later than checkin date.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     unavailable_hotel_ids = Reservation.objects.filter(
-        checkin__lt=checkout,
-        checkout__gt=checkin
+        checkin__lt=checkout_date,
+        checkout__gt=checkin_date
     ).values_list('hotel_id', flat=True)
 
-    # available hotels = all hotels except unavailable ones
     available_hotels = Hotel.objects.exclude(id__in=unavailable_hotel_ids)
 
     serializer = HotelSerializer(available_hotels, many=True)
