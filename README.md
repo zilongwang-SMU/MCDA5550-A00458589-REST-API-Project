@@ -25,6 +25,20 @@ The system ensures:
 
 ---
 
+## 🌐 Deployment (IMPORTANT)
+
+**Deployed URL:**
+http://mcda5550-hotel-api-env.eba-p88bzn5f.ca-central-1.elasticbeanstalk.com/
+
+### Example API Endpoints
+
+**Get available hotels:**
+http://mcda5550-hotel-api-env.eba-p88bzn5f.ca-central-1.elasticbeanstalk.com/api/hotels/?checkin=2026-03-28&checkout=2026-03-30
+**Create reservation:**
+http://mcda5550-hotel-api-env.eba-p88bzn5f.ca-central-1.elasticbeanstalk.com/api/reservations/confirm/
+
+---
+
 ## 🛠 Technologies Used
 
 - Python
